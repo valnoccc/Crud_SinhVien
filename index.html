@@ -4,102 +4,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống Quản lý Sinh viên</title>
+    <title>Quản lý Sinh viên - Nhóm 6 Thành Viên</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5;
-            color: #1a1a1a;
+            background-color: #f4f7fa;
+            color: #333;
         }
 
         .card {
             border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: 0.3s;
         }
 
-        .table thead {
-            background-color: #f8f9fa;
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
         }
 
         .avatar-circle {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             object-fit: cover;
             border-radius: 50%;
-            border: 2px solid #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        .btn-action {
-            width: 35px;
-            height: 35px;
-            padding: 0;
-            line-height: 35px;
+        .member-item {
+            padding: 10px;
             border-radius: 8px;
+            background: #fff;
+            border: 1px solid #edf2f7;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
         }
 
-        .sticky-form {
+        .member-item i {
+            font-size: 1.2rem;
+            margin-right: 12px;
+            color: #0d6efd;
+        }
+
+        .leader {
+            border-left: 4px solid #0d6efd;
+            background: #eef6ff;
+        }
+
+        .sticky-sidebar {
             position: sticky;
             top: 20px;
+        }
+
+        .table-container {
+            max-height: 800px;
+            overflow-y: auto;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="container py-5">
+    <div class="container mt-4">
+        <div class="card p-4 mb-4 bg-primary text-white border-0 shadow-lg">
+            <div class="row align-items-center">
+                <div class="col-md-7">
+                    <h2 class="fw-bold mb-1">DỰ ÁN QUẢN LÝ SINH VIÊN</h2>
+                </div>
+                <div class="col-md-5 text-md-end">
+                    <h4 class="fw-bold mb-0 text-uppercase">Nhóm 17</h4>
+                    <div class="mt-1"><span class="badge bg-light text-primary fw-bold">6 THÀNH VIÊN</span></div>
+                </div>
+            </div>
+        </div>
+
         <div class="row g-4">
             <div class="col-lg-4">
-                <div class="card sticky-form p-4">
-                    <h5 class="fw-bold mb-4" id="formTitle"><i class="bi bi-person-plus-fill me-2"></i>Thêm Sinh Viên
-                    </h5>
-                    <form id="studentForm">
-                        <input type="hidden" id="studentId">
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Họ và tên</label>
-                            <input type="text" id="name" class="form-control" placeholder="Nguyễn Văn A">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Email</label>
-                            <input type="email" id="email" class="form-control" placeholder="name@example.com">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Số điện thoại</label>
-                            <input type="text" id="phone" class="form-control" placeholder="090x xxx xxx">
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label small fw-bold">Link Avatar</label>
-                            <input type="text" id="avatar" class="form-control" placeholder="https://...">
-                        </div>
-                        <div class="d-grid gap-2">
-                            <button type="button" class="btn btn-primary fw-bold" onclick="handleSave()">
-                                <i class="bi bi-cloud-arrow-up-fill me-2"></i>Lưu thông tin
-                            </button>
-                            <button type="button" class="btn btn-light btn-sm" onclick="clearForm()">Làm mới</button>
-                        </div>
-                    </form>
+                <div class="sticky-sidebar">
+                    <div class="card p-4 mb-4">
+                        <h5 class="fw-bold mb-4 text-primary"><i class="bi bi-person-plus-fill me-2"></i>Thêm Sinh Viên
+                        </h5>
+                        <form id="studentForm">
+                            <input type="hidden" id="studentId">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Họ và tên</label>
+                                <input type="text" id="name" class="form-control bg-light border-0"
+                                    placeholder="Nhập tên SV">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Email</label>
+                                <input type="email" id="email" class="form-control bg-light border-0"
+                                    placeholder="example@mail.com">
+                            </div>
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <label class="form-label small fw-bold">Điện thoại</label>
+                                    <input type="text" id="phone" class="form-control bg-light border-0"
+                                        placeholder="09xxx">
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <label class="form-label small fw-bold">Avatar (URL)</label>
+                                    <input type="text" id="avatar" class="form-control bg-light border-0"
+                                        placeholder="https://...">
+                                </div>
+                            </div>
+                            <div class="d-grid gap-2 mt-2">
+                                <button type="button" class="btn btn-primary fw-bold py-2" onclick="handleSave()">Lưu
+                                    Thông Tin</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm border-0"
+                                    onclick="clearForm()">Làm mới</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card p-4">
+                        <h6 class="fw-bold mb-3 text-secondary text-uppercase small tracking-wider">Thành viên thực hiện
+                        </h6>
+                        <div class="member-item"><i class="bi bi-person"></i><span class="small fw-semibold">Chu Văn
+                                Lộc</span></div>
+                        <div class="member-item"><i class="bi bi-person"></i><span class="small fw-semibold">Lê Nguyễn
+                                Đăng Khoa</span></div>
+                        <div class="member-item"><i class="bi bi-person"></i><span class="small fw-semibold">Dương Quốc
+                                Bảo</span></div>
+                        <div class="member-item"><i class="bi bi-person"></i><span class="small fw-semibold">Trần Hải
+                                Long</span></div>
+                        <div class="member-item"><i class="bi bi-person"></i><span class="small fw-semibold">Nguyễn Thị
+                                Tuyết Nhi</span></div>
+                        <div class="member-item"><i class="bi bi-person"></i><span class="small fw-semibold">Phạm Lê
+                                Hướng Tinh</span></div>
+                    </div>
                 </div>
             </div>
 
             <div class="col-lg-8">
                 <div class="card p-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="fw-bold m-0">Danh sách sinh viên</h5>
-                        <span class="badge bg-primary-subtle text-primary rounded-pill px-3" id="totalCount">0 sinh
-                            viên</span>
+                        <h5 class="fw-bold m-0"><i class="bi bi-table me-2"></i>Dữ liệu Sinh Viên</h5>
+                        <span class="badge bg-primary rounded-pill px-3" id="totalCount">Đang tải...</span>
                     </div>
 
-                    <div class="table-responsive">
+                    <div class="table-responsive table-container">
                         <table class="table table-hover align-middle" id="studentTable">
-                            <thead>
+                            <thead class="table-light sticky-top">
                                 <tr>
                                     <th>Sinh viên</th>
-                                    <th>Liên hệ</th>
-                                    <th class="text-end">Hành động</th>
+                                    <th>Thông tin liên hệ</th>
+                                    <th class="text-end">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -115,41 +168,39 @@
     <script>
         const API_URL = 'https://698591166964f10bf2539592.mockapi.io/SinhVien';
 
-        // Tải dữ liệu
         async function loadData() {
-            const res = await fetch(API_URL);
-            const data = await res.json();
-            document.getElementById('totalCount').innerText = `${data.length} sinh viên`;
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                document.getElementById('totalCount').innerText = `${data.length} sinh viên hiện có`;
 
-            const tbody = document.querySelector('#studentTable tbody');
-            tbody.innerHTML = data.map(s => `
-            <tr>
-                <td>
-                    <div class="d-flex align-items-center">
-                        <img src="${s.avatar}" class="avatar-circle me-3" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(s.name)}'">
-                        <div>
-                            <div class="fw-bold">${s.name}</div>
-                            <div class="text-muted small">ID: #${s.id}</div>
+                const tbody = document.querySelector('#studentTable tbody');
+                tbody.innerHTML = data.map(s => `
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <img src="${s.avatar}" class="avatar-circle me-3 border shadow-sm" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(s.name)}&background=random'">
+                            <div>
+                                <div class="fw-bold text-dark">${s.name}</div>
+                                <div class="text-muted" style="font-size: 11px;">Mã: ${s.id}</div>
+                            </div>
                         </div>
-                    </div>
-                </td>
-                <td>
-                    <div class="small"><i class="bi bi-envelope me-1"></i>${s.email}</div>
-                    <div class="small text-muted"><i class="bi bi-telephone me-1"></i>${s.phone}</div>
-                </td>
-                <td class="text-end">
-                    <button class="btn btn-light btn-action text-warning me-1" onclick="editMode('${s.id}', '${s.name}', '${s.email}', '${s.phone}', '${s.avatar}')">
-                        <i class="bi bi-pencil-square"></i>
-                    </button>
-                    <button class="btn btn-light btn-action text-danger" onclick="deleteStudent('${s.id}')">
-                        <i class="bi bi-trash3-fill"></i>
-                    </button>
-                </td>
-            </tr>
-        `).join('');
+                    </td>
+                    <td>
+                        <div class="small fw-semibold text-primary"><i class="bi bi-envelope-at me-1"></i>${s.email}</div>
+                        <div class="small text-muted"><i class="bi bi-phone me-1"></i>${s.phone}</div>
+                    </td>
+                    <td class="text-end">
+                        <button class="btn btn-outline-warning btn-sm border-0" onclick="editMode('${s.id}', '${s.name}', '${s.email}', '${s.phone}', '${s.avatar}')"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-outline-danger btn-sm border-0" onclick="deleteStudent('${s.id}')"><i class="bi bi-trash-fill"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+            } catch (e) {
+                console.error("Lỗi API:", e);
+            }
         }
 
-        // Lưu / Cập nhật
         async function handleSave() {
             const id = document.getElementById('studentId').value;
             const student = {
@@ -160,7 +211,7 @@
             };
 
             if (!student.name || !student.email) {
-                Swal.fire('Lỗi', 'Vui lòng điền tên và email!', 'error');
+                Swal.fire('Lưu ý', 'Vui lòng nhập tên và email!', 'info');
                 return;
             }
 
@@ -173,26 +224,24 @@
                 body: JSON.stringify(student)
             });
 
-            Swal.fire('Thành công', id ? 'Đã cập nhật!' : 'Đã thêm mới!', 'success');
+            Swal.fire('Hoàn tất', id ? 'Cập nhật thành công!' : 'Đã thêm vào danh sách!', 'success');
             clearForm();
             loadData();
         }
 
-        // Xóa với SweetAlert2
         async function deleteStudent(id) {
             const result = await Swal.fire({
-                title: 'Bạn chắc chắn chứ?',
-                text: "Dữ liệu sẽ không thể khôi phục!",
+                title: 'Xóa sinh viên này?',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                confirmButtonText: 'Đúng, xóa nó!'
+                confirmButtonText: 'Đúng, xóa ngay',
+                cancelButtonText: 'Hủy'
             });
 
             if (result.isConfirmed) {
                 await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-                Swal.fire('Đã xóa!', 'Sinh viên đã bị loại khỏi danh sách.', 'success');
                 loadData();
+                Swal.fire('Đã xóa!', '', 'success');
             }
         }
 
@@ -202,15 +251,12 @@
             document.getElementById('email').value = email;
             document.getElementById('phone').value = phone;
             document.getElementById('avatar').value = avatar;
-
-            document.getElementById('formTitle').innerHTML = '<i class="bi bi-pencil-fill me-2 text-warning"></i>Sửa Sinh Viên';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 150, behavior: 'smooth' });
         }
 
         function clearForm() {
             document.getElementById('studentForm').reset();
             document.getElementById('studentId').value = '';
-            document.getElementById('formTitle').innerHTML = '<i class="bi bi-person-plus-fill me-2"></i>Thêm Sinh Viên';
         }
 
         loadData();
