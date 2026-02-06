@@ -4,10 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý Sinh viên - Nhóm 6 Thành Viên</title>
+    <title>Quản lý Sinh viên - Nhóm 17</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -49,19 +52,18 @@
             color: #0d6efd;
         }
 
-        .leader {
-            border-left: 4px solid #0d6efd;
-            background: #eef6ff;
-        }
-
         .sticky-sidebar {
             position: sticky;
             top: 20px;
         }
 
+        /* Tùy chỉnh để bảng DataTable trông gọn hơn */
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 0;
+        }
+
         .table-container {
-            max-height: 800px;
-            overflow-y: auto;
+            padding: 10px 0;
         }
     </style>
 </head>
@@ -72,7 +74,7 @@
         <div class="card p-4 mb-4 bg-primary text-white border-0 shadow-lg">
             <div class="row align-items-center">
                 <div class="col-md-7">
-                    <h2 class="fw-bold mb-1">DỰ ÁN QUẢN LÝ SINH VIÊN</h2>
+                    <h2 class="fw-bold mb-1 text-uppercase">Dự án Quản lý Sinh viên</h2>
                 </div>
                 <div class="col-md-5 text-md-end">
                     <h4 class="fw-bold mb-0 text-uppercase">Nhóm 17</h4>
@@ -146,17 +148,16 @@
                         <span class="badge bg-primary rounded-pill px-3" id="totalCount">Đang tải...</span>
                     </div>
 
-                    <div class="table-responsive table-container">
-                        <table class="table table-hover align-middle" id="studentTable">
-                            <thead class="table-light sticky-top">
+                    <div class="table-container">
+                        <table class="table table-hover align-middle w-100" id="studentTable">
+                            <thead class="table-light">
                                 <tr>
                                     <th>Sinh viên</th>
                                     <th>Thông tin liên hệ</th>
                                     <th class="text-end">Thao tác</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                            </tbody>
+                            <tbody></tbody>
                         </table>
                     </div>
                 </div>
@@ -164,15 +165,25 @@
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
     <script>
         const API_URL = 'https://698591166964f10bf2539592.mockapi.io/SinhVien';
+        let dataTable; // Biến lưu thực thể DataTable
 
         async function loadData() {
             try {
                 const res = await fetch(API_URL);
                 const data = await res.json();
-                document.getElementById('totalCount').innerText = `${data.length} sinh viên hiện có`;
+
+                // 1. Hủy bảng cũ nếu đã tồn tại
+                if ($.fn.DataTable.isDataTable('#studentTable')) {
+                    $('#studentTable').DataTable().destroy();
+                }
 
                 const tbody = document.querySelector('#studentTable tbody');
                 tbody.innerHTML = data.map(s => `
@@ -195,53 +206,79 @@
                         <button class="btn btn-outline-danger btn-sm border-0" onclick="deleteStudent('${s.id}')"><i class="bi bi-trash-fill"></i></button>
                     </td>
                 </tr>
-            `).join('');
+                `).join('');
+
+                // 2. Khởi tạo DataTable mới
+                dataTable = $('#studentTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json'
+                    },
+                    pageLength: 10,
+                    order: [[0, 'desc']], // Mặc định sắp xếp theo tên mới nhất
+                    columnDefs: [
+                        { orderable: false, targets: 2 } // Tắt sắp xếp cho cột Thao tác
+                    ]
+                });
+
+                document.getElementById('totalCount').innerText = `${data.length} sinh viên`;
             } catch (e) {
                 console.error("Lỗi API:", e);
+                Swal.fire('Lỗi', 'Không thể kết nối đến dữ liệu!', 'error');
             }
         }
 
         async function handleSave() {
             const id = document.getElementById('studentId').value;
             const student = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                avatar: document.getElementById('avatar').value
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                avatar: document.getElementById('avatar').value.trim()
             };
 
             if (!student.name || !student.email) {
-                Swal.fire('Lưu ý', 'Vui lòng nhập tên và email!', 'info');
+                Swal.fire('Lưu ý', 'Vui lòng nhập ít nhất tên và email!', 'info');
                 return;
             }
 
+            Swal.showLoading();
             const method = id ? 'PUT' : 'POST';
             const url = id ? `${API_URL}/${id}` : API_URL;
 
-            await fetch(url, {
-                method: method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(student)
-            });
+            try {
+                await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(student)
+                });
 
-            Swal.fire('Hoàn tất', id ? 'Cập nhật thành công!' : 'Đã thêm vào danh sách!', 'success');
-            clearForm();
-            loadData();
+                Swal.fire('Hoàn tất', id ? 'Đã cập nhật thông tin!' : 'Đã thêm thành công!', 'success');
+                clearForm();
+                loadData();
+            } catch (error) {
+                Swal.fire('Lỗi', 'Không thể lưu dữ liệu!', 'error');
+            }
         }
 
         async function deleteStudent(id) {
             const result = await Swal.fire({
-                title: 'Xóa sinh viên này?',
+                title: 'Xác nhận xóa?',
+                text: "Bạn không thể hoàn tác hành động này!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Đúng, xóa ngay',
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Đúng, xóa ngay!',
                 cancelButtonText: 'Hủy'
             });
 
             if (result.isConfirmed) {
-                await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-                loadData();
-                Swal.fire('Đã xóa!', '', 'success');
+                try {
+                    await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                    loadData();
+                    Swal.fire('Đã xóa!', 'Dữ liệu sinh viên đã được loại bỏ.', 'success');
+                } catch (error) {
+                    Swal.fire('Lỗi', 'Không thể xóa dữ liệu!', 'error');
+                }
             }
         }
 
@@ -251,7 +288,17 @@
             document.getElementById('email').value = email;
             document.getElementById('phone').value = phone;
             document.getElementById('avatar').value = avatar;
-            window.scrollTo({ top: 150, behavior: 'smooth' });
+
+            // Cuộn mượt lên form và đổi màu nút nếu muốn
+            window.scrollTo({ top: 100, behavior: 'smooth' });
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'info',
+                title: 'Đang chế độ sửa: ' + name,
+                showConfirmButton: false,
+                timer: 2000
+            });
         }
 
         function clearForm() {
@@ -259,7 +306,10 @@
             document.getElementById('studentId').value = '';
         }
 
-        loadData();
+        // Chạy lần đầu
+        $(document).ready(function () {
+            loadData();
+        });
     </script>
 </body>
 
